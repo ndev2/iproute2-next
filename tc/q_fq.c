@@ -71,7 +71,7 @@ static unsigned int ilog2(unsigned int val)
 }
 
 static int fq_parse_opt(struct qdisc_util *qu, int argc, char **argv,
-			struct nlmsghdr *n)
+			struct nlmsghdr *n, char *dev)
 {
 	unsigned int plimit;
 	unsigned int flow_plimit;
@@ -116,14 +116,26 @@ static int fq_parse_opt(struct qdisc_util *qu, int argc, char **argv,
 			}
 		} else if (strcmp(*argv, "maxrate") == 0) {
 			NEXT_ARG();
-			if (get_rate(&maxrate, *argv)) {
+			if (strchr(*argv, '%')) {
+				if(get_percent_rate(&maxrate, *argv, dev)){	
+					fprintf(stderr, "Illegal \"maxrate\"\n");	
+					return -1;
+				}
+			}	
+			else if (get_rate(&maxrate, *argv)) {
 				fprintf(stderr, "Illegal \"maxrate\"\n");
 				return -1;
 			}
 			set_maxrate = true;
 		} else if (strcmp(*argv, "defrate") == 0) {
 			NEXT_ARG();
-			if (get_rate(&defrate, *argv)) {
+			if (strchr(*argv, '%')) {
+				if(get_percent_rate(&defrate, *argv, dev)){
+					fprintf(stderr, "Illegal \"defrate\"\n");
+					return -1;
+				}
+			}
+			else if (get_rate(&defrate, *argv)) {
 				fprintf(stderr, "Illegal \"defrate\"\n");
 				return -1;
 			}

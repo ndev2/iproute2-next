@@ -36,7 +36,7 @@ static void explain1(const char *arg, const char *val)
 }
 
 
-static int tbf_parse_opt(struct qdisc_util *qu, int argc, char **argv, struct nlmsghdr *n)
+static int tbf_parse_opt(struct qdisc_util *qu, int argc, char **argv, struct nlmsghdr *n, char *dev)
 {
 	int ok = 0;
 	struct tc_tbf_qopt opt = {};
@@ -126,7 +126,11 @@ static int tbf_parse_opt(struct qdisc_util *qu, int argc, char **argv, struct nl
 				fprintf(stderr, "tbf: duplicate \"rate\" specification\n");
 				return -1;
 			}
-			if (get_rate64(&rate64, *argv)) {
+			if(get_percent_rate64(&rate64, *argv, dev)){
+					explain1("rate", *argv);
+					return -1;
+			}	
+			else if (get_rate64(&rate64, *argv)) {
 				explain1("rate", *argv);
 				return -1;
 			}
@@ -137,7 +141,11 @@ static int tbf_parse_opt(struct qdisc_util *qu, int argc, char **argv, struct nl
 				fprintf(stderr, "tbf: duplicate \"peakrate\" specification\n");
 				return -1;
 			}
-			if (get_rate64(&prate64, *argv)) {
+			if(get_percent_rate64(&prate64, *argv, dev)){
+					explain1("peakrate", *argv);
+					return -1;
+			}
+			else if (get_rate64(&prate64, *argv)) {
 				explain1("peakrate", *argv);
 				return -1;
 			}

@@ -117,7 +117,7 @@ static int init_gred(struct qdisc_util *qu, int argc, char **argv,
 /*
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 */
-static int gred_parse_opt(struct qdisc_util *qu, int argc, char **argv, struct nlmsghdr *n)
+static int gred_parse_opt(struct qdisc_util *qu, int argc, char **argv, struct nlmsghdr *n, char *dev)
 {
 	int ok = 0;
 	struct tc_gred_qopt opt = { 0 };
@@ -200,7 +200,13 @@ static int gred_parse_opt(struct qdisc_util *qu, int argc, char **argv, struct n
 			ok++;
 		} else if (strcmp(*argv, "bandwidth") == 0) {
 			NEXT_ARG();
-			if (get_rate(&rate, *argv)) {
+			if (strchr(*argv, '%')) {
+				if(get_percent_rate(&rate, *argv, dev)){
+					fprintf(stderr, "Illegal \"bandwidth\"\n");
+					return -1;
+				}
+			}
+			else if (get_rate(&rate, *argv)) {
 				fprintf(stderr, "Illegal \"bandwidth\"\n");
 				return -1;
 			}

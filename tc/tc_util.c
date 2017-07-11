@@ -191,6 +191,93 @@ static const struct rate_suffix {
 	{ NULL }
 };
 
+int read_prop(char *dev, char *prop, long *value)
+{
+	char fname[41], buf[80], *endp;
+	ssize_t len;
+	int fd;
+	long result;
+
+	sprintf(fname, "/sys/class/net/%s/%s", dev, prop);
+	fd = open(fname, O_RDONLY);
+	if (fd < 0) {
+		if (strcmp(prop, "tun_flags"))
+			fprintf(stderr, "open %s: %s\n", fname,
+				strerror(errno));
+		return -1;
+	}
+	len = read(fd, buf, sizeof(buf)-1);
+	close(fd);
+	if (len < 0) {
+		fprintf(stderr, "read %s: %s", fname, strerror(errno));
+		return -1;
+	}
+
+	buf[len] = 0;
+	result = strtol(buf, &endp, 0);
+	if (*endp != '\n') {
+		fprintf(stderr, "Failed to parse %s\n", fname);
+		return -1;
+	}
+	*value = result;
+	return 0;
+}
+
+int get_percent_rate(unsigned int *rate, const char *str, char *dev)
+{
+	long value;
+	char percent[strlen(dev) - 1], r_str[20];
+	int i;
+	double d, r;
+
+	if (read_prop(dev, "speed", &value))
+		return -1;
+
+	for (i = 0; str[i]!= '%'; i++)
+		percent[i] = str[i];
+
+	sscanf(percent, "%lf", &d);	
+
+	if (d > 100. || d < 0.) {
+		fprintf(stderr, "Invalid rate specified \n");
+		return -1;
+	}
+
+	r = (d*value) / 100.; 
+	snprintf(r_str, 20, "%f", r);
+
+	return get_rate(rate, r_str);
+
+}
+
+int get_percent_rate64(__u64 *rate, const char *str, char *dev)
+{
+	long value;
+	char percent[strlen(dev) - 1], r_str[20];
+	int i;
+	double d, r;
+
+	if (read_prop(dev, "speed", &value))
+		return -1;
+
+	for (i = 0; str[i]!= '%'; i++)
+		percent[i] = str[i];
+
+	sscanf(percent, "%lf", &d);	
+
+	if (d > 100. || d < 0.) {
+		fprintf(stderr, "Invalid rate specified \n");
+		return -1;
+	}
+
+	r = (d*value) / 100.; 
+	snprintf(r_str, 20, "%f", r);
+
+	return get_rate64(rate, r_str);
+
+}
+
+
 
 int get_rate(unsigned int *rate, const char *str)
 {

@@ -29,7 +29,7 @@ static void explain(void)
 }
 
 
-static int rr_parse_opt(struct qdisc_util *qu, int argc, char **argv, struct nlmsghdr *n)
+static int rr_parse_opt(struct qdisc_util *qu, int argc, char **argv, struct nlmsghdr *n, char *dev)
 {
 	int pmap_mode = 0;
 	int idx = 0;
