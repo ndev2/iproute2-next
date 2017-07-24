@@ -30,7 +30,7 @@ static void explain(void)
 }
 
 static int mqprio_parse_opt(struct qdisc_util *qu, int argc,
-			    char **argv, struct nlmsghdr *n)
+			    char **argv, struct nlmsghdr *n, char *dev)
 {
 	int idx;
 	struct tc_mqprio_qopt opt = {

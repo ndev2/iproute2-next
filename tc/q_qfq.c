@@ -36,7 +36,7 @@ static void explain_class(void)
 }
 
 static int qfq_parse_opt(struct qdisc_util *qu, int argc, char **argv,
-			 struct nlmsghdr *n)
+			 struct nlmsghdr *n, char *dev)
 {
 	if (argc > 0) {
 		if (matches(*argv, "help") != 0)
@@ -49,7 +49,7 @@ static int qfq_parse_opt(struct qdisc_util *qu, int argc, char **argv,
 }
 
 static int qfq_parse_class_opt(struct qdisc_util *qu, int argc, char **argv,
-			       struct nlmsghdr *n)
+			       struct nlmsghdr *n, char *dev)
 {
 	struct rtattr *tail;
 	__u32 tmp;
