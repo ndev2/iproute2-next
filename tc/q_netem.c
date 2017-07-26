@@ -399,9 +399,11 @@ random_loss_model:
 		} else if (matches(*argv, "rate") == 0) {
 			++present[TCA_NETEM_RATE];
 			NEXT_ARG();
-			if(get_percent_rate64(&rate64, *argv, dev)){
-					explain1("rate");
-					return -1;
+			if (strchr(*argv, '%')) {
+				if (get_percent_rate64(&rate64, *argv, dev)) {
+						explain1("rate");
+						return -1;
+				}
 			}
 			else if (get_rate64(&rate64, *argv)) {
 				explain1("rate");

@@ -179,8 +179,8 @@ static int htb_parse_class_opt(struct qdisc_util *qu, int argc, char **argv, str
 				fprintf(stderr, "Double \"ceil\" spec\n");
 				return -1;
 			}
-			if (!strchr(*argv, '%')) {
-				if(get_percent_rate64(&ceil64, *argv, dev)){	
+			if (strchr(*argv, '%')) {	
+	        		if (get_percent_rate64(&ceil64, *argv, dev)){	
 						explain1("ceil");
 						return -1;
 				}
@@ -196,11 +196,11 @@ static int htb_parse_class_opt(struct qdisc_util *qu, int argc, char **argv, str
 				fprintf(stderr, "Double \"rate\" spec\n");
 				return -1;
 			}
-			if (!strchr(*argv, '%')) {
-				if(get_percent_rate64(&rate64, *argv, dev)){	
+			if (strchr(*argv, '%')) {
+				if (get_percent_rate64(&rate64, *argv, dev)){	
 						explain1("rate");
 						return -1;
-				}		
+				}
 			}
 			else if (get_rate64(&rate64, *argv)) {
 				explain1("rate");

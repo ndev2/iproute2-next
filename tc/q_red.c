@@ -84,9 +84,11 @@ static int red_parse_opt(struct qdisc_util *qu, int argc, char **argv, struct nl
 			}
 		} else if (strcmp(*argv, "bandwidth") == 0) {
 			NEXT_ARG();
-			if(get_percent_rate(&rate, *argv, dev)){
-					fprintf(stderr, "Illegal \"bandwidth\"\n");
-					return -1;
+			if (strchr(*argv, '%')) {
+				if (get_percent_rate(&rate, *argv, dev)) {
+						fprintf(stderr, "Illegal \"bandwidth\"\n");
+						return -1;
+				}
 			}	
 			else if (get_rate(&rate, *argv)) {
 				fprintf(stderr, "Illegal \"bandwidth\"\n");
